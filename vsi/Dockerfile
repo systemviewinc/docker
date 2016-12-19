@@ -30,37 +30,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   flex \
   gcc-multilib
 
-# copy in config file
-COPY install_config.txt /
-
-# download and run the install
-ARG VIVADO_TAR_HOST
-ARG VIVADO_TAR_FILE
-ARG VIVADO_VERSION
-RUN echo "Downloading ${VIVADO_TAR_FILE} from ${VIVADO_TAR_HOST}" && \
-  wget ${VIVADO_TAR_HOST}/${VIVADO_TAR_FILE}.tar.gz -q && \
-  echo "Extracting Vivado tar file" && \
-  tar xzf ${VIVADO_TAR_FILE}.tar.gz && \
-  /${VIVADO_TAR_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA --batch Install --config install_config.txt && \
-  rm -rf ${VIVADO_TAR_FILE}*
-
-# create a new user
-RUN adduser --disabled-password --gecos '' vivado
-USER vivado
-WORKDIR /home/vivado
-#add vivado tools to path
-RUN echo "source /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/vivado/.bashrc
-
-# copy license file
-RUN mkdir /home/vivado/.Xilinx
-COPY Xilinx.lic /home/vivado/.Xilinx/
-
 # Set user for VNC server (USER is only for build)
 ENV USER root
 # Set default password
 COPY password.txt .
-RUN cat password.txt password.txt | vncpasswd && \
-  rm password.txt
+RUN cat password.txt password.txt | vncpasswd && rm password.txt
 # Expose VNC port
 EXPOSE 5901
 
@@ -69,4 +43,29 @@ RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
 
 # Copy VNC script that handles restarts
 COPY vnc.sh /opt/
+
+# copy in config file
+COPY install_config.txt /
+
+# COPY Vivado /Xilinx/
+
+# install Vivado
+# RUN bash /Xilinx/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA --batch Install --config install_config.txt
+
+# create a new user
+RUN adduser --disabled-password --gecos '' vivado
+USER vivado
+WORKDIR /home/vivado
+
+ARG VIVADO_VERSION
+
+# add vivado tools to path
+RUN echo "source /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/vivado/.bashrc
+
+## copy license file
+RUN mkdir /home/vivado/.Xilinx
+#COPY Xilinx.lic /home/vivado/.Xilinx/
+
+# finally start vncserver
+USER root
 CMD ["/opt/vnc.sh"]
