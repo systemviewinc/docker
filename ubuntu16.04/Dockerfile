@@ -41,41 +41,32 @@ ENV USER root
 # Set XDRP to use TightVNC port
 RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
 
-# copy in config file
-COPY install_config.txt /
-
-# COPY Vivado /Xilinx/
-
-# install Vivado
-# RUN bash /Xilinx/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA --batch Install --config install_config.txt
-
-ENV username vivado
+ENV USER vivado
 # create a new user
-RUN useradd -m ${username} -s /bin/bash -G sudo
+RUN useradd -m ${USER} -s /bin/bash -G sudo
 COPY password.txt .
 
 # set password
-RUN echo -n ${username}: | cat - password.txt | chpasswd && rm password.txt
-RUN echo "${username}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-ENV USER ${username}
-USER ${username}
-WORKDIR /home/${username}
+RUN echo -n ${USER}: | cat - password.txt | chpasswd && rm password.txt
+RUN echo "${USER}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER ${USER}
+WORKDIR /home/${USER}
 
 ARG VIVADO_VERSION
 
 # add vivado tools to path
-RUN echo "#. /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${username}/.bashrc
+RUN echo "#. /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${USER}/.bashrc
 
 ## copy license file
-RUN mkdir /home/${username}/.Xilinx
-#COPY Xilinx.lic /home/${username}/.Xilinx/
+RUN mkdir /home/${USER}/.Xilinx
+#COPY Xilinx.lic /home/${USER}/.Xilinx/
 
 # Copy VNC script that handles restarts
 COPY vnc.sh /opt/
 
 # vnc config
-RUN mkdir -p /home/${username}/.vnc
-COPY xstartup /home/${username}/.vnc
+RUN mkdir -p /home/${USER}/.vnc
+COPY xstartup /home/${USER}/.vnc
 
 # Expose VNC port
 EXPOSE 5901
