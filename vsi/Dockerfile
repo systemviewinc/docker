@@ -2,8 +2,9 @@
 FROM ubuntu:16.04
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
-# Install XFCE4, VNC server, XRDP and Vivado
+# Install XFCE4, XRDP and assorted tools
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  sudo \
   fish \
   wget \
   build-essential \
@@ -15,7 +16,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   libfreetype6 \
   libfontconfig \
   xfce4 \
-  tightvncserver \
   xrdp \
   zlib1g-dev \
   cmake \
@@ -28,21 +28,18 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   make \
   bison \
   flex \
-  gcc-multilib
+  gcc-multilib \
+  libtasn1-3-bin \
+  xfce4-terminal
+
+# install tigervnc
+RUN wget https://bintray.com/tigervnc/stable/download_file?file_path=ubuntu-16.04LTS%2Famd64%2Ftigervncserver_1.7.0-1ubuntu1_amd64.deb -O tigervncserver_1.7.0-1ubuntu1_amd64.deb && dpkg -i tigervncserver_1.7.0-1ubuntu1_amd64.deb && apt install -f
 
 # Set user for VNC server (USER is only for build)
 ENV USER root
-# Set default password
-COPY password.txt .
-RUN cat password.txt password.txt | vncpasswd && rm password.txt
-# Expose VNC port
-EXPOSE 5901
 
 # Set XDRP to use TightVNC port
 RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
-
-# Copy VNC script that handles restarts
-COPY vnc.sh /opt/
 
 # copy in config file
 COPY install_config.txt /
@@ -52,20 +49,39 @@ COPY install_config.txt /
 # install Vivado
 # RUN bash /Xilinx/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA --batch Install --config install_config.txt
 
+ENV username vivado
 # create a new user
-RUN adduser --disabled-password --gecos '' vivado
-USER vivado
-WORKDIR /home/vivado
+RUN useradd -m ${username} -s /bin/bash -G sudo
+COPY password.txt .
+
+# set password
+RUN echo -n ${username}: | cat - password.txt | chpasswd && rm password.txt
+RUN echo "${username}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER ${username}
+WORKDIR /home/${username}
 
 ARG VIVADO_VERSION
 
 # add vivado tools to path
-RUN echo "source /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/vivado/.bashrc
+RUN echo "source /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${username}/.bashrc
 
 ## copy license file
-RUN mkdir /home/vivado/.Xilinx
-#COPY Xilinx.lic /home/vivado/.Xilinx/
+RUN mkdir /home/${username}/.Xilinx
+#COPY Xilinx.lic /home/${username}/.Xilinx/
+
+# Copy VNC script that handles restarts
+COPY vnc.sh /opt/
+
+# vnc config
+RUN mkdir -p /home/${username}/.vnc
+COPY xstartup /home/${username}/.vnc
+
+# Expose VNC port
+EXPOSE 5901
+
+# Set default password
+COPY password.txt .
+RUN cat password.txt password.txt | vncpasswd && rm password.txt
 
 # finally start vncserver
-USER root
 CMD ["/opt/vnc.sh"]
