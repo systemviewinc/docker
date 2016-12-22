@@ -10,10 +10,8 @@ ARG SDK_HOST=http://127.0.0.1
 ARG SDK_FILE=Xilinx_SDK_${SDK_VERSION}
 
 # Install Xilinx SDK
-RUN echo " ===> Downloading SDK image from ${SDK_HOST}/${SDK_FILE}.tar.bz2 <===" && \
-	wget -q ${SDK_HOST}/${SDK_FILE}.tar.bz2 && \
-	echo " ===> Extracting SDK Image <===" && \
-	tar xf ${SDK_FILE}.tar.bz2 && \
+RUN echo " ===> Downloading and extracting SDK image from ${SDK_HOST}/${SDK_FILE}.tar.bz2 <===" && \
+	wget -qO- ${SDK_HOST}/${SDK_FILE}.tar.bz2 | tar x && \
 	echo " ===> Installing SDK <===" && \
 	sudo bash ${SDK_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c ${SDK_FILE}/install_config.txt && \
 	echo " ===> SDK Installation Completed <===" && \

@@ -12,10 +12,8 @@ ARG VIVADO_FILE=Xilinx_Vivado_SDK_${VIVADO_VERSION}_${VIVADO_MINOR_VERSION}
 
 # Install Xilinx SDK
 COPY install_config.txt .
-RUN echo " ===> Downloading Vivado image from ${VIVADO_HOST}/${VIVADO_FILE}.tar.gz <===" && \
-	wget -q ${VIVADO_HOST}/${VIVADO_FILE}.tar.gz && \
-	echo " ===> Extracting Vivado Image <===" && \
-	tar xf ${VIVADO_FILE}.tar.gz && \
+RUN echo " ===> Downloading and extracting Vivado image from ${VIVADO_HOST}/${VIVADO_FILE}.tar.gz <===" && \
+	wget -qO- ${VIVADO_HOST}/${VIVADO_FILE}.tar.gz | tar xz && \
 	echo " ===> Installing Vivado <===" && \
 	sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c install_config.txt && \
 	echo " ===> Vivado Installation Completed <===" && \
