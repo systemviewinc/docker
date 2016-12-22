@@ -52,15 +52,6 @@ RUN echo "${USER}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER ${USER}
 WORKDIR /home/${USER}
 
-ARG VIVADO_VERSION
-
-# add vivado tools to path
-RUN echo "#. /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${USER}/.bashrc
-
-## copy license file
-RUN mkdir /home/${USER}/.Xilinx
-#COPY Xilinx.lic /home/${USER}/.Xilinx/
-
 # Copy VNC script that handles restarts
 COPY vnc.sh /opt/
 
