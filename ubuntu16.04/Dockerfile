@@ -33,7 +33,12 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   xfce4-terminal
 
 # install tigervnc
-RUN wget https://bintray.com/tigervnc/stable/download_file?file_path=ubuntu-16.04LTS%2Famd64%2Ftigervncserver_1.7.0-1ubuntu1_amd64.deb -O tigervncserver_1.7.0-1ubuntu1_amd64.deb && dpkg -i tigervncserver_1.7.0-1ubuntu1_amd64.deb && apt install -f
+ARG VNC_PACKAGE=tigervncserver_1.7.0-1ubuntu1_amd64.deb
+RUN echo " ===> Installing tigerVNC <===" && \
+	wget -q https://bintray.com/tigervnc/stable/download_file?file_path=ubuntu-16.04LTS%2Famd64%2F${VNC_PACKAGE} -O ${VNC_PACKAGE} && \
+	dpkg -i tigervncserver_1.7.0-1ubuntu1_amd64.deb && \
+	apt install -f && \
+	rm ${VNC_PACKAGE}
 
 # Set user for VNC server (USER is only for build)
 ENV USER root

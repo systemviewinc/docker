@@ -15,7 +15,7 @@ RUN echo " ===> Downloading SDK image from ${SDK_HOST}/${SDK_FILE}.tar.bz2 <==="
 	echo " ===> Extracting SDK Image <===" && \
 	tar xf ${SDK_FILE}.tar.bz2 && \
 	echo " ===> Installing SDK <===" && \
-	sudo bash ${SDK_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c install_config.txt && \
+	sudo bash ${SDK_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c ${SDK_FILE}/install_config.txt && \
 	echo " ===> SDK Installation Completed <===" && \
 	rm -rf ${SDK_FILE}*
 
