@@ -5,18 +5,9 @@ MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 # Install XFCE4, XRDP and assorted tools
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   sudo \
-  fish \
   wget \
   build-essential \
   libglib2.0-0 \
-  libsm6 \
-  libxi6 \
-  libxrender1 \
-  libxrandr2 \
-  libfreetype6 \
-  libfontconfig \
-  xfce4 \
-  xrdp \
   zlib1g-dev \
   cmake \
   git \
@@ -30,7 +21,21 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   flex \
   gcc-multilib \
   libtasn1-3-bin \
-  xfce4-terminal
+  libpixman-1-0 \
+  x11-utils \
+  libglu1-mesa \
+  libsm6 \
+  libxi6 \
+  libxrender1 \
+  libxrandr2 \
+  libfreetype6 \
+  libfontconfig \
+  xrdp \
+  xfce4 \
+  xfce4-terminal && \
+  apt-get remove vnc4server -y && \
+  apt-get upgrade -y && \
+  apt-get autoremove -y
 
 # install tigervnc
 ARG VNC_PACKAGE=tigervncserver_1.7.0-1ubuntu1_amd64.deb
