@@ -20,7 +20,15 @@ RUN echo " ===> Downloading and extracting Vivado image from ${VIVADO_HOST}/${VI
 	rm -rf ${VIVADO_FILE}*
 
 # add vivado tools to path
-RUN echo ". /opt/Xilinx/VIVADO/${VIVADO_VERSION}/settings64.sh" >> /home/${USER}/.bashrc
+RUN echo ". /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${USER}/.bashrc
+
+# disable GTK3, required to run xsdk
+RUN echo "export SWT_GTK3=0" >> /home/${USER}/.bashrc
+
+# install cable drivers
+RUN echo " ===> Install Cable Drivers <===" && \
+	cd /opt/Xilinx/Vivado/2016.4/data/xicom/cable_drivers/lin64/install_script/install_drivers && \
+	sudo ./install_drivers
 
 ## copy license file
 RUN mkdir -p /home/${USER}/.Xilinx
