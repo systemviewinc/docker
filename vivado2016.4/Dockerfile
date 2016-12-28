@@ -19,6 +19,8 @@ RUN echo " ===> Downloading and extracting Vivado image from ${VIVADO_HOST}/${VI
 	echo " ===> Vivado Installation Completed <===" && \
 	rm -rf ${VIVADO_FILE}*
 
+RUN rm install_config.txt
+
 # add vivado tools to path
 RUN echo ". /opt/Xilinx/Vivado/${VIVADO_VERSION}/settings64.sh" >> /home/${USER}/.bashrc
 
