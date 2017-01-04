@@ -47,37 +47,41 @@ RUN echo " ===> Installing tigerVNC <===" && \
 	apt install -f && \
 	rm ${VNC_PACKAGE}
 
+ARG REPO_PATH=https://github.com/systemviewinc/docker/raw/master/ubuntu16.04
+
 # Set user for VNC server (USER is only for build)
 ENV USER root
+
+# Copy VNC script that handles restarts
+RUN wget -q ${REPO_PATH}/vnc.sh -O /opt/vnc.sh && \
+  chmod 755 /opt/vnc.sh
 
 # Set XDRP to use TightVNC port
 RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
 
-ARG REPO_PATH=https://github.com/systemviewinc/docker/raw/master/ubuntu16.04
 ENV USER vsi
+
 # create a new user
 RUN useradd -m ${USER} -s /bin/bash -G sudo
-RUN wget -q ${REPO_PATH}/password.txt -O password.txt
 
 # set password
-RUN echo -n ${USER}: | cat - password.txt | chpasswd && rm password.txt
-RUN echo "${USER}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN wget -q ${REPO_PATH}/password.txt -O password.txt && \
+  echo -n ${USER}: | cat - password.txt | chpasswd && \
+  echo "${USER}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER ${USER}
 WORKDIR /home/${USER}
 
-# Copy VNC script that handles restarts
-RUN wget -q ${REPO_PATH}/vnc.sh -O /opt/vnc.sh
-
 # vnc config
-RUN mkdir -p /home/${USER}/.vnc
-RUN wget -q ${REPO_PATH}/xstartup -O /home/${USER}/.vnc/xstartup
+RUN mkdir -p /home/${USER}/.vnc && \
+  wget -q ${REPO_PATH}/xstartup -O /home/${USER}/.vnc/xstartup && \
+  chmod 755 /home/${USER}/.vnc/xstartup
 
 # Expose VNC port
 EXPOSE 5901
 
 # Set default password
-RUN wget -q ${REPO_PATH}/password.txt -O password.txt
-RUN cat password.txt password.txt | vncpasswd && rm password.txt
+RUN wget -q ${REPO_PATH}/password.txt -O password.txt && \
+  cat password.txt password.txt | vncpasswd && rm password.txt
 
 # finally start vncserver
 CMD ["/opt/vnc.sh"]
