@@ -2,7 +2,7 @@
 FROM systemview/ubuntu:16.04
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
-ENV USER vivado
+ENV USER vsi
 USER ${USER}
 
 ARG SDK_VERSION=2016.4

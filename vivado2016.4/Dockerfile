@@ -2,7 +2,7 @@
 FROM systemview/xilinx_sdk:2016.4
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
-ENV USER vivado
+ENV USER vsi
 USER ${USER}
 
 ARG VIVADO_VERSION=2016.4

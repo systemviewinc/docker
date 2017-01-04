@@ -51,7 +51,7 @@ ENV USER root
 # Set XDRP to use TightVNC port
 RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
 
-ENV USER vivado
+ENV USER vsi
 # create a new user
 RUN useradd -m ${USER} -s /bin/bash -G sudo
 COPY password.txt .
