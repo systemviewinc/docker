@@ -53,10 +53,11 @@ ENV USER root
 # Set XDRP to use TightVNC port
 RUN sed -i '0,/port=-1/{s/port=-1/port=5901/}' /etc/xrdp/xrdp.ini
 
+ARG REPO_PATH=https://github.com/systemviewinc/docker/raw/master/ubuntu16.04
 ENV USER vsi
 # create a new user
 RUN useradd -m ${USER} -s /bin/bash -G sudo
-COPY password.txt .
+RUN wget -q ${REPO_PATH}/password.txt -O password.txt
 
 # set password
 RUN echo -n ${USER}: | cat - password.txt | chpasswd && rm password.txt
@@ -65,17 +66,17 @@ USER ${USER}
 WORKDIR /home/${USER}
 
 # Copy VNC script that handles restarts
-COPY vnc.sh /opt/
+RUN wget -q ${REPO_PATH}/vnc.sh -O /opt/vnc.sh
 
 # vnc config
 RUN mkdir -p /home/${USER}/.vnc
-COPY xstartup /home/${USER}/.vnc
+RUN wget -q ${REPO_PATH}/xstartup -O /home/${USER}/.vnc/xstartup
 
 # Expose VNC port
 EXPOSE 5901
 
 # Set default password
-COPY password.txt .
+RUN wget -q ${REPO_PATH}/password.txt -O password.txt
 RUN cat password.txt password.txt | vncpasswd && rm password.txt
 
 # finally start vncserver
