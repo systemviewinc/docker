@@ -3,7 +3,9 @@ FROM ubuntu:16.04
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
 # Install XFCE4, XRDP and assorted tools
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
   sudo \
   wget \
   build-essential \
