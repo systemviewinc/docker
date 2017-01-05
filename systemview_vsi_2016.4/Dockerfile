@@ -14,7 +14,7 @@ RUN echo " ===> Downloading and extracting VSI image from ${VSI_HOST}/${VSI_FILE
 	sudo mkdir -p /opt/Systemview/VSI/${VSI_VERSION} && \
 	cd /opt/Systemview/VSI/${VSI_VERSION} && \
 	echo " ===> Downloading VSI <===" && \
-	wget -qO- ${VSI_HOST}/${VSI_FILE}.tar.bz2 | sudo tar xj && \
+	wget -qO- ${VSI_HOST}/${VSI_FILE}.tar.bz2 | sudo tar xjm && \
 	echo " ===> VSI Installation Completed <==="
 
-RUN echo "export PATH=/opt/Systemview/VSI/${VIVADO_VERSION}/host/linux.x86_64/bin:$PATH" >> /home/${USER}/.bashrc
+RUN echo "export VSI_INSTALL=/opt/Systemview/VSI/${VSI_VERSION}\nexport PATH=/opt/Systemview/VSI/${VSI_VERSION}/host/linux.x86_64/bin:\$PATH" >> /home/${USER}/.bashrc
