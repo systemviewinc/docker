@@ -1,5 +1,5 @@
 # Start with Systemview ubuntu image
-FROM systemview/ubuntu:16.04
+FROM gcr.io/systemviewinc/ubuntu:16.04
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
 ENV USER vsi

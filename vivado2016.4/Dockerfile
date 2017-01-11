@@ -1,5 +1,5 @@
 # Start with Systemview xilinx_sdk image
-FROM systemview/xilinx_sdk:2016.4
+FROM gcr.io/systemviewinc/xilinx_sdk:2016.4
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
 ENV USER vsi

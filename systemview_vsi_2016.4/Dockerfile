@@ -1,5 +1,5 @@
 # Start with Systemview vivado image
-FROM systemview/vivado:2016.4
+FROM gcr.io/systemviewinc/vivado:2016.4
 MAINTAINER Adnan Yunus <adnan@systemviewinc.com>
 
 ENV USER vsi
@@ -17,4 +17,4 @@ RUN echo " ===> Downloading and extracting VSI image from ${VSI_HOST}/${VSI_FILE
 	wget -qO- ${VSI_HOST}/${VSI_FILE}.tar.bz2 | sudo tar xjm && \
 	echo " ===> VSI Installation Completed <==="
 
-RUN echo "export VSI_INSTALL=/opt/Systemview/VSI/${VSI_VERSION}\nexport PATH=/opt/Systemview/VSI/${VSI_VERSION}/host/linux.x86_64/bin:\$PATH" >> /home/${USER}/.bashrc
+RUN echo "export VSI_INSTALL=\${VSI_INSTALL:-/opt/Systemview/VSI/${VSI_VERSION}}\nexport PATH=\${VSI_INSTALL}/host/linux.x86_64/bin:\$PATH" >> /home/${USER}/.bashrc
