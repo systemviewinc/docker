@@ -36,7 +36,8 @@ RUN apt-get update && \
   libfontconfig \
   xrdp \
   xfce4 \
-  xfce4-terminal && \
+  xfce4-terminal \
+  openssh-server && \
   apt-get remove vnc4server -y && \
   apt-get upgrade -y && \
   apt-get autoremove -y && \
@@ -45,6 +46,11 @@ RUN apt-get update && \
   dpkg -i tigervncserver_1.7.0-1ubuntu1_amd64.deb && \
   apt install -f && \
   rm ${VNC_PACKAGE}
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+RUN mkdir /var/run/sshd
 
 # Set user for VNC server (USER is only for build)
 ENV USER root
@@ -63,8 +69,11 @@ RUN echo "${USER}    ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER ${USER}
 WORKDIR /home/${USER}
 
-# Copy VNC script that handles restarts
-COPY vnc.sh /opt/
+# expose SSH port
+EXPOSE 22
+
+# Copy remote script to restart sshd and run VNC
+COPY remote.sh /opt/
 
 # vnc config
 RUN mkdir -p /home/${USER}/.vnc
@@ -77,5 +86,5 @@ EXPOSE 5901
 COPY password.txt .
 RUN cat password.txt password.txt | vncpasswd && rm password.txt
 
-# finally start vncserver
-CMD ["/opt/vnc.sh"]
+# finally start remote script
+CMD ["/opt/remote.sh"]

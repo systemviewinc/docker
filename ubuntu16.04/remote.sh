@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# restart ssh demon
+sudo service ssh restart
+
 SCREEN_SIZE=${SCREEN_SIZE:=1280x800}
 
 # Remove VNC lock (if process already killed)
