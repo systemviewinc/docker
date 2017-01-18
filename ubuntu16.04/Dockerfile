@@ -37,8 +37,13 @@ RUN apt-get update && \
   xrdp \
   xfce4 \
   xfce4-terminal \
-  openssh-server && \
-  apt-get remove vnc4server -y && \
+  python3-pip \
+  openssh-server \
+  fish
+
+RUN apt-get remove -y vnc4server \
+  xscreensaver \
+  pulseaudio && \
   apt-get upgrade -y && \
   apt-get autoremove -y && \
   echo " ===> Installing tigerVNC <===" && \
