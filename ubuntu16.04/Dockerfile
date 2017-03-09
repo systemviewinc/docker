@@ -39,7 +39,8 @@ RUN apt-get update && \
   xfce4-terminal \
   python3-pip \
   openssh-server \
-  fish
+  fish \
+  expect
 
 RUN apt-get remove -y vnc4server \
   xscreensaver \

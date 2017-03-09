@@ -6,7 +6,7 @@ ENV USER vsi
 USER ${USER}
 
 ARG SDK_VERSION=2016.4
-ARG SDK_HOST=http://127.0.0.1
+ARG SDK_HOST=https://storage.googleapis.com/systemview/xilinx
 ARG SDK_FILE=Xilinx_SDK_${SDK_VERSION}
 
 # Install Xilinx SDK
