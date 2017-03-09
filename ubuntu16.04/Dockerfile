@@ -40,7 +40,8 @@ RUN apt-get update && \
   python3-pip \
   openssh-server \
   fish \
-  expect
+  expect \
+  openjdk-8-jdk
 
 RUN apt-get remove -y vnc4server \
   xscreensaver \
