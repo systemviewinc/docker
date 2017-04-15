@@ -1,0 +1,101 @@
+{
+  "variables": {
+    "ami_version": "2017.1",
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "vsi_version": "2016.4",
+    "vsi_version_min": "_1.1",
+    "svi_s3": "https://s3.amazonaws.com/systemview",
+    "nx_img": "nomachine_5.2.21_1_x86_64.rpm",
+    "vsi_rel_type": "release",
+    "vivado_version": "2017.1",
+    "vivado_version_min": "_0415_1"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "source_ami": "ami-ae7bfdb8",
+    "instance_type": "t2.2xlarge",
+    "ssh_username": "centos",
+    "ami_name": "Visual System Integrator {{user `vsi_version`}}{{user `vsi_version_min`}} ami {{user `ami_version`}}",
+    "ami_product_codes": "",
+    "ami_block_device_mappings": [{
+      "device_name": "/dev/sda1",
+      "volume_size": 150,
+      "volume_type": "gp2",
+      "delete_on_termination": true
+    },{
+      "device_name": "/dev/sdb1",
+      "volume_size": 5,
+      "volume_type": "gp2",
+      "delete_on_termination": false
+    }],
+    "launch_block_device_mappings": [{
+      "device_name": "/dev/sda1",
+      "volume_size": 150,
+      "volume_type": "gp2",
+      "delete_on_termination": true
+    }]
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "echo '===>Updating message of the day<==='",
+      "echo '__   _____ ___   ___ ___  ___   _     ___  _____   __    _   __  __ ___' > /tmp/motd",
+      "echo '\\ \\ / / __|_ _| | __| _ \\/ __| /_\\   |   \\| __\\ \\ / /   /_\\ |  \\/  |_ _|' >> /tmp/motd",
+      "echo ' \\ V /\\__ \\| |  | _||  _/ (_ |/ _ \\  | |) | _| \\ V /   / _ \\| |\\/| || |' >> /tmp/motd",
+      "echo '  \\_/ |___/___| |_| |_|  \\___/_/ \\_\\ |___/|___| \\_/   /_/ \\_\\_|  |_|___|' >> /tmp/motd",
+      "echo >> /tmp/motd",
+      "echo 'AMI Version:                   {{user `vsi_version`}}{{user `vsi_version_min`}}' >> /tmp/motd",
+      "echo 'Readme:                        /home/centos/src/README.md' >> /tmp/motd",
+      "echo 'SystemView Root:               /opt/Systemview' >> /tmp/motd",
+      "echo 'Xilinx Tools:                  /opt/Xilinx/' >> /tmp/motd",
+      "echo 'SystemView Developer Support:  http://docs.systemviewinc.com/aws.html' >> /tmp/motd",
+      "echo 'AWS FPGA AMI Release Notes:    /home/centos/src/RELEASE_NOTES.md' >> /tmp/motd",
+      "echo 'AWS Developer Support:         https://github.com/aws/aws-fpga/blob/master/README.md#developer-support' >> /tmp/motd",
+      "sudo mv /tmp/motd /etc/motd",
+
+      "echo '===>Adding epel repository<==='",
+      "sudo yum -y install epel-release deltarpm centos-release-scl",
+      "sudo yum -y update",
+
+      "echo '===>installing GCC 6 tools <==='",
+      "sudo yum install -y devtoolset-6-gcc*",
+      "echo source scl_source enable devtoolset-6 >> ~/.bashrc",
+
+      "echo '===>installing utils and display tools <==='",
+      "sudo yum install -y fish lightdm wget python-pip python-wheel bzip2",
+      "sudo yum groupinstall -y \"x window system\"",
+      "sudo yum groupinstall -y xfce",
+
+      "mkdir -p ~/.config/xfce4/terminal && echo 'FontName=DejaVu Sans Mono 10' >> ~/.config/xfce4/terminal/terminalrc",
+
+      "wget -q {{user `svi_s3`}}/thirdparty/{{user `nx_img`}} && sudo rpm -i ~/{{user `nx_img`}} && rm ~/{{user `nx_img`}}",
+      "mkdir -p ~/.nx/config && cd ~/.nx/config && ln -s ../../.ssh/authorized_keys authorized.crt && cd ~/",
+
+      "sudo pip install --upgrade awscli",
+
+      "export VIVADO_FILE=Xilinx_Vivado_SDK_{{user `vivado_version`}}{{user `vivado_version_min`}}",
+      "echo '===> Downloading and extracting Vivado image from {{user `svi_s3`}}/thirdparty/${VIVADO_FILE}.tar.bz2 <==='",
+      "wget -q {{user `svi_s3`}}/thirdparty/vivado_install_config.txt",
+      "wget -qO- {{user `svi_s3`}}/thirdparty/${VIVADO_FILE}.tar.bz2 | tar xj",
+      "echo '===> Installing Vivado <==='",
+      "sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c vivado_install_config.txt",
+      "echo '===> Vivado Installation Completed <==='",
+      "rm -rf ${VIVADO_FILE}* install_config.txt",
+      "echo export VIVADO_ROOT=/opt/Xilinx >> ~/.bashrc",
+      "echo export VIVADO_VERSION={{user `vivado_version`}} >> ~/.bashrc",
+
+      "export VSI_INSTALL_IMG=systemview_vsi_{{user `vsi_version`}}{{user `vsi_version_min`}}.tar.bz2",
+      "export VSI_INSTALL=/opt/Systemview/VSI/{{user `vsi_version`}}",
+      "wget -q {{user `svi_s3`}}/files/{{user `vsi_rel_type`}}/${VSI_INSTALL_IMG} && sudo mkdir -p ${VSI_INSTALL} && cd ${VSI_INSTALL} && sudo tar xf ~/${VSI_INSTALL_IMG} && rm ~/${VSI_INSTALL_IMG}",
+      "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
+
+      "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin:\\${VIVADO_ROOT}/Vivado/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/arm/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/linux_toolchain/lin64_le/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-linux/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-none/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/armr5/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/tps/lnx64/cmake-3.3.2/bin >> ~/.bashrc",
+      "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl"
+    ]
+  }]
+}
