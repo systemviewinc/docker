@@ -71,7 +71,7 @@
       "sudo yum groupinstall -y \"x window system\"",
       "sudo yum groupinstall -y xfce",
 
-      "mkdir -p ~/.config/xfce4/terminal && echo \"FontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
+      "mkdir -p ~/.config/xfce4/terminal && echo [Configuration]\n\"FontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
 
       "wget -q {{user `svi_s3`}}/thirdparty/{{user `nx_img`}} && sudo rpm -i ~/{{user `nx_img`}} && rm ~/{{user `nx_img`}}",
       "mkdir -p ~/.nx/config && cd ~/.nx/config && ln -s ../../.ssh/authorized_keys authorized.crt && cd ~/",
