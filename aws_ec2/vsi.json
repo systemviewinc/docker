@@ -71,17 +71,17 @@
       "sudo yum groupinstall -y \"x window system\"",
       "sudo yum groupinstall -y xfce",
 
-      "mkdir -p ~/.config/xfce4/terminal && echo [Configuration]\n\"FontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
+      "mkdir -p ~/.config/xfce4/terminal && echo [Configuration] >> ~/.config/xfce4/terminal/terminalrc && echo \"FontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
 
-      "wget -q {{user `svi_s3`}}/thirdparty/{{user `nx_img`}} && sudo rpm -i ~/{{user `nx_img`}} && rm ~/{{user `nx_img`}}",
+      "wget -q {{user `svi_s3`}}/files/thirdparty/{{user `nx_img`}} && sudo rpm -i ~/{{user `nx_img`}} && rm ~/{{user `nx_img`}}",
       "mkdir -p ~/.nx/config && cd ~/.nx/config && ln -s ../../.ssh/authorized_keys authorized.crt && cd ~/",
 
       "sudo pip install --upgrade awscli",
 
       "export VIVADO_FILE=Xilinx_Vivado_SDK_{{user `vivado_version`}}{{user `vivado_version_min`}}",
-      "echo \"===> Downloading and extracting Vivado image from {{user `svi_s3`}}/thirdparty/${VIVADO_FILE}.tar.bz2 <===\"",
-      "wget -q {{user `svi_s3`}}/thirdparty/vivado_install_config.txt",
-      "wget -qO- {{user `svi_s3`}}/thirdparty/${VIVADO_FILE}.tar.bz2 | tar xj",
+      "echo \"===> Downloading and extracting Vivado image from {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}.tar.bz2 <===\"",
+      "wget -q {{user `svi_s3`}}/files/thirdparty/vivado_install_config.txt",
+      "wget -qO- {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}.tar.bz2 | tar xj",
       "echo \"===> Installing Vivado <===\"",
       "sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c vivado_install_config.txt",
       "echo \"===> Vivado Installation Completed <===\"",
