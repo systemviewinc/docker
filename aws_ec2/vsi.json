@@ -8,8 +8,11 @@
     "svi_s3": "https://s3.amazonaws.com/systemview",
     "nx_img": "nomachine_5.2.21_1_x86_64.rpm",
     "vsi_rel_type": "release",
+	"vivado_name": "Xilinx_Vivado_SDK_",
     "vivado_version": "2017.1",
-    "vivado_version_min": "_0415_1"
+    "vivado_version_min": "_0415_1",
+	"vivado_tar_ext": ".tar.gz",
+	"vivado_tar_flag": "xf"
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -50,12 +53,12 @@
       "echo \"  \\_/ |___/___| |_| |_|  \\___/_/ \\_\\ |___/|___| \\_/   /_/ \\_\\_|  |_|___|\" >> /tmp/motd",
       "echo >> /tmp/motd",
       "echo \"AMI Version:                   {{user `vsi_version`}}{{user `vsi_version_min`}}\" >> /tmp/motd",
-      "echo \"Readme:                        /home/centos/src/README.md\" >> /tmp/motd",
       "echo \"SystemView Root:               /opt/Systemview\" >> /tmp/motd",
-      "echo \"Xilinx Tools:                  /opt/Xilinx/\" >> /tmp/motd",
-      "echo \"SystemView Developer Support:  http://docs.systemviewinc.com/aws.html\" >> /tmp/motd",
-      "echo \"AWS FPGA AMI Release Notes:    /home/centos/src/RELEASE_NOTES.md\" >> /tmp/motd",
-      "echo \"AWS Developer Support:         https://github.com/aws/aws-fpga/blob/master/README.md#developer-support\" >> /tmp/motd",
+      "echo \"Xilinx Tools:                  /opt/Xilinx\" >> /tmp/motd",
+      "echo \"SystemView AMI Developer Support:  https://systemviewinc.com/amazon-aws-f1/\" >> /tmp/motd",
+      "echo \"Visual System Integrator Documentation:  http://docs.systemviewinc.com\" >> /tmp/motd",
+      "echo \"AWS F1 Developer Support:         https://github.com/aws/aws-fpga/blob/master/README.md#developer-support\" >> /tmp/motd",
+      "echo \"Centos Readme:                        /home/centos/src/README.md\" >> /tmp/motd",
       "sudo mv /tmp/motd /etc/motd",
 
       "echo \"===>Adding epel repository<===\"",
@@ -78,10 +81,10 @@
 
       "sudo pip install --upgrade awscli",
 
-      "export VIVADO_FILE=Xilinx_Vivado_SDK_{{user `vivado_version`}}{{user `vivado_version_min`}}",
-      "echo \"===> Downloading and extracting Vivado image from {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}.tar.bz2 <===\"",
+      "export VIVADO_FILE={{user `vivado_name`}}{{user `vivado_version`}}{{user `vivado_version_min`}}",
+      "echo \"===> Downloading and extracting Vivado image from {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}{{user `vivado_tar_ext`}} <===\"",
       "wget -q {{user `svi_s3`}}/files/thirdparty/vivado_install_config.txt",
-      "wget -qO- {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}.tar.bz2 | tar xj",
+      "wget -qO- {{user `svi_s3`}}/files/thirdparty/${VIVADO_FILE}{{user `vivado_tar_ext`}} | tar {{user `vivado_tar_flag`}}",
       "echo \"===> Installing Vivado <===\"",
       "sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c vivado_install_config.txt",
       "echo \"===> Vivado Installation Completed <===\"",
@@ -95,6 +98,9 @@
       "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
 
       "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin:\\${VIVADO_ROOT}/Vivado/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/arm/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/linux_toolchain/lin64_le/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-linux/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-none/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/armr5/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/tps/lnx64/cmake-3.3.2/bin >> ~/.bashrc",
+	  "echo if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi"
+      "echo export CL_DIR=/home/centos/aws-fpga/hdk/cl/vsi_cl/ >> ~/.bashrc",
+      "echo source /home/centos/aws-fpga/hdk_setup.sh >> ~/.bashrc",
       "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl"
     ]
   }]
