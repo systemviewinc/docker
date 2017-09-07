@@ -14,7 +14,7 @@
 	"vivado_tar_ext": ".tar.gz",
 	"vivado_tar_flag": "xz",
 	"vivado_install_config": "vivado_install_config.txt",
-	"xilinx_env_script": "/opt/Xilinx/Vivado/2017.1/settings64.sh"
+	"xilinx_root": "/opt/Xilinx/Vivado/2017.1"
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -54,13 +54,13 @@
       "echo \" \\ V /\\__ \\| |  | _||  _/ (_ |/ _ \\  | |) | _| \\ V /   / _ \\| |\\/| || |\" >> /tmp/motd",
       "echo \"  \\_/ |___/___| |_| |_|  \\___/_/ \\_\\ |___/|___| \\_/   /_/ \\_\\_|  |_|___|\" >> /tmp/motd",
       "echo >> /tmp/motd",
-      "echo \"AMI Version:                   {{user `vsi_version`}}{{user `vsi_version_min`}}\" >> /tmp/motd",
-      "echo \"SystemView Root:               /opt/Systemview\" >> /tmp/motd",
-      "echo \"Xilinx Tools:                  /opt/Xilinx\" >> /tmp/motd",
-      "echo \"SystemView AMI Developer Support:  https://systemviewinc.com/amazon-aws-f1/\" >> /tmp/motd",
-      "echo \"Visual System Integrator Documentation:  http://docs.systemviewinc.com\" >> /tmp/motd",
-      "echo \"AWS F1 Developer Support:         https://github.com/aws/aws-fpga/blob/master/README.md#developer-support\" >> /tmp/motd",
-      "echo \"Centos Readme:                        /home/centos/src/README.md\" >> /tmp/motd",
+      "echo \"AMI Version:                            {{user `vsi_version`}}{{user `vsi_version_min`}}\" >> /tmp/motd",
+      "echo \"SystemView Root:                        /opt/Systemview\" >> /tmp/motd",
+      "echo \"Xilinx Tools:                           {{user `xilinx_root`}}\" >> /tmp/motd",
+      "echo \"SystemView AMI Developer Support:       https://systemviewinc.com/amazon-aws-f1/\" >> /tmp/motd",
+      "echo \"Visual System Integrator Documentation: http://docs.systemviewinc.com\" >> /tmp/motd",
+      "echo \"AWS F1 Developer Support:               https://github.com/aws/aws-fpga/blob/master/README.md#developer-support\" >> /tmp/motd",
+      "echo \"Centos Readme:                          /home/centos/src/README.md\" >> /tmp/motd",
       "sudo mv /tmp/motd /etc/motd",
 
       "echo \"===>Adding epel repository<===\"",
@@ -91,7 +91,7 @@
       "sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c {{user `vivado_install_config`}}",
       "echo \"===> Vivado Installation Completed <===\"",
       "rm -rf ${VIVADO_FILE}* {{user `vivado_install_config`}}",
-      "echo source  {{user `xilinx_env_script`}} >> ~/.bashrc",
+      "echo source  {{user `xilinx_root`}}/settings64.sh >> ~/.bashrc",
 
       "export VSI_INSTALL_IMG=systemview_vsi_{{user `vsi_version`}}{{user `vsi_version_min`}}.tar.bz2",
       "export VSI_INSTALL=/opt/Systemview/VSI/{{user `vsi_version`}}",
