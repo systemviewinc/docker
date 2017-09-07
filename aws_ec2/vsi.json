@@ -13,7 +13,8 @@
     "vivado_version_min": "_0415_1",
 	"vivado_tar_ext": ".tar.gz",
 	"vivado_tar_flag": "xz",
-	"vivado_install_config": "vivado_install_config.txt"
+	"vivado_install_config": "vivado_install_config.txt",
+	"xilinx_env_script": "/opt/Xilinx/Vivado/2017.1/settings64.sh"
   },
   "builders": [{
     "type": "amazon-ebs",
@@ -71,7 +72,7 @@
       "echo source scl_source enable devtoolset-6 >> ~/.bashrc",
 
       "echo \"===>installing utils and display tools <===\"",
-      "sudo yum install -y fish wget python-pip python-wheel bzip2",
+      "sudo yum install -y fish git wget python-pip python-wheel bzip2",
       "sudo yum groupinstall -y \"x window system\"",
       "sudo yum groupinstall -y xfce",
 
@@ -90,16 +91,15 @@
       "sudo bash ${VIVADO_FILE}/xsetup --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA -b Install -c {{user `vivado_install_config`}}",
       "echo \"===> Vivado Installation Completed <===\"",
       "rm -rf ${VIVADO_FILE}* {{user `vivado_install_config`}}",
-      "echo export VIVADO_ROOT=/opt/Xilinx >> ~/.bashrc",
-      "echo export VIVADO_VERSION={{user `vivado_version`}} >> ~/.bashrc",
+      "echo source  {{user `xilinx_env_script`}} >> ~/.bashrc",
 
       "export VSI_INSTALL_IMG=systemview_vsi_{{user `vsi_version`}}{{user `vsi_version_min`}}.tar.bz2",
       "export VSI_INSTALL=/opt/Systemview/VSI/{{user `vsi_version`}}",
       "wget -q {{user `svi_s3`}}/files/{{user `vsi_rel_type`}}/${VSI_INSTALL_IMG} && sudo mkdir -p ${VSI_INSTALL} && cd ${VSI_INSTALL} && sudo tar xf ~/${VSI_INSTALL_IMG} && rm ~/${VSI_INSTALL_IMG}",
       "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
+      "echo source export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin >> ~/.bashrc",
 
-      "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin:\\${VIVADO_ROOT}/Vivado/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/arm/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/linux_toolchain/lin64_le/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-linux/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-none/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/armr5/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/tps/lnx64/cmake-3.3.2/bin >> ~/.bashrc",
-	  "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\"",
+	  "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\" >> ~/.bashrc",
       "echo export CL_DIR=/home/centos/aws-fpga/hdk/cl/vsi_cl/ >> ~/.bashrc",
       "echo source /home/centos/aws-fpga/hdk_setup.sh >> ~/.bashrc",
       "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl"
