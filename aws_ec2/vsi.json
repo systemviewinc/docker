@@ -99,7 +99,7 @@
       "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
 
       "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin:\\${VIVADO_ROOT}/Vivado/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/arm/lin/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/microblaze/linux_toolchain/lin64_le/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch32/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-linux/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/aarch64/lin/aarch64-none/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/gnu/armr5/lin/gcc-arm-none-eabi/bin:\\${VIVADO_ROOT}/SDK/\\${VIVADO_VERSION}/tps/lnx64/cmake-3.3.2/bin >> ~/.bashrc",
-	  "echo if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi",
+	  "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\"",
       "echo export CL_DIR=/home/centos/aws-fpga/hdk/cl/vsi_cl/ >> ~/.bashrc",
       "echo source /home/centos/aws-fpga/hdk_setup.sh >> ~/.bashrc",
       "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl"
