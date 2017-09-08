@@ -93,10 +93,10 @@
       "rm -rf ${VIVADO_FILE}* {{user `vivado_install_config`}}",
       "echo source  {{user `xilinx_root`}}/settings64.sh >> ~/.bashrc",
 
-      "export VSI_AWS={{user `ami_version`}}",
       "export VSI_INSTALL_IMG=systemview_vsi_{{user `vsi_version`}}{{user `vsi_version_min`}}.tar.bz2",
       "export VSI_INSTALL=/opt/Systemview/VSI/{{user `vsi_version`}}",
       "wget -q {{user `svi_s3`}}/files/{{user `vsi_rel_type`}}/${VSI_INSTALL_IMG} && sudo mkdir -p ${VSI_INSTALL} && cd ${VSI_INSTALL} && sudo tar xf ~/${VSI_INSTALL_IMG} && rm ~/${VSI_INSTALL_IMG}",
+      "echo export VSI_AWS={{user `ami_version`}} >> ~/.bashrc",
       "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
       "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin >> ~/.bashrc",
 
