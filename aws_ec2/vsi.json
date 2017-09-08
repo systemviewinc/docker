@@ -32,7 +32,7 @@
       "volume_type": "gp2",
       "delete_on_termination": true
     },{
-      "device_name": "/dev/sdb1",
+      "device_name": "/dev/sdb",
       "volume_size": 5,
       "volume_type": "gp2",
       "delete_on_termination": false
@@ -54,7 +54,7 @@
       "echo \" \\ V /\\__ \\| |  | _||  _/ (_ |/ _ \\  | |) | _| \\ V /   / _ \\| |\\/| || |\" >> /tmp/motd",
       "echo \"  \\_/ |___/___| |_| |_|  \\___/_/ \\_\\ |___/|___| \\_/   /_/ \\_\\_|  |_|___|\" >> /tmp/motd",
       "echo >> /tmp/motd",
-      "echo \"AMI Version:                            {{user `vsi_version`}}{{user `vsi_version_min`}}\" >> /tmp/motd",
+      "echo \"AMI Version:                            {{user `ami_version`}}\" >> /tmp/motd",
       "echo \"SystemView Root:                        /opt/Systemview\" >> /tmp/motd",
       "echo \"Xilinx Tools:                           {{user `xilinx_root`}}\" >> /tmp/motd",
       "echo \"SystemView AMI Developer Support:       https://systemviewinc.com/amazon-aws-f1/\" >> /tmp/motd",
@@ -97,7 +97,7 @@
       "export VSI_INSTALL=/opt/Systemview/VSI/{{user `vsi_version`}}",
       "wget -q {{user `svi_s3`}}/files/{{user `vsi_rel_type`}}/${VSI_INSTALL_IMG} && sudo mkdir -p ${VSI_INSTALL} && cd ${VSI_INSTALL} && sudo tar xf ~/${VSI_INSTALL_IMG} && rm ~/${VSI_INSTALL_IMG}",
       "echo export VSI_INSTALL=${VSI_INSTALL} >> ~/.bashrc",
-      "echo source export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin >> ~/.bashrc",
+      "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin >> ~/.bashrc",
 
 	  "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\" >> ~/.bashrc",
       "echo export CL_DIR=/home/centos/aws-fpga/hdk/cl/vsi_cl/ >> ~/.bashrc",
