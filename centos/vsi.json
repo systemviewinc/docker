@@ -51,6 +51,8 @@
 
       "echo \"===>installing GCC 6 tools <===\"",
       "sudo yum install -y devtoolset-6-gcc*",
+
+      "echo \"[ -z PS1 ] && return\" >> ~/.bashrc",
       "echo source scl_source enable devtoolset-6 >> ~/.bashrc",
 
       "echo \"===>installing utils and display tools <===\"",
