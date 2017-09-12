@@ -29,7 +29,7 @@ fi
 
 echo "Getting latest Visual System Integrator for Vivado ${VIVADO_VERSION}"
 
-VSI_RELEASE=`curl -L -s https://systemviewinc.com/release.json`
+VSI_RELEASE=`wget -qO- https://systemviewinc.com/release.json`
 
 # echo $VSI_RELEASE
 
