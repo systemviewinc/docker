@@ -21,7 +21,7 @@
     "source_ami": "ami-ae7bfdb8",
     "instance_type": "t2.2xlarge",
     "ssh_username": "centos",
-    "ami_name": "Visual System Integrator {{user `vsi_version`}}{{user `vsi_version_min`}} ami {{user `ami_version`}}",
+    "ami_name": "Visual System Integrator - ami {{user `ami_version`}}",
     "ami_product_codes": "",
     "ami_block_device_mappings": [{
       "device_name": "/dev/sda1",
@@ -95,7 +95,7 @@
       "cd /usr/bin && sudo wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/vsi_update.sh && sudo chmod +x vsi_update.sh",
       "echo export VSI_AWS={{user `ami_version`}} >> ~/.bashrc",
       "echo export VSI_INSTALL=/opt/Systemview/VSI/latest >> ~/.bashrc",
-      "echo \"if [ ! -d ${VSI_INSTALL} ]; then echo Installing latest version of VSI. Please Wait...; sudo vsi_update.sh; fi\" >> ~/.bashrc",
+      "echo 'if [ ! -d ${VSI_INSTALL} ]; then echo Installing latest version of VSI. Please Wait...; sudo vsi_update.sh; fi' >> ~/.bashrc",
       "echo export PATH=\\$PATH:\\${VSI_INSTALL}/host/linux.x86_64/bin >> ~/.bashrc",
 
       "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\" >> ~/.bashrc",
