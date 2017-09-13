@@ -101,7 +101,9 @@
       "echo \"if [ ! -d ~/aws-fpga ]; then echo Cloning Aws-Fpga CL Repo. Please wait...; git clone https://github.com/systemviewinc/aws-fpga ~/aws-fpga; fi\" >> ~/.bashrc",
       "echo export CL_DIR=/home/centos/aws-fpga/hdk/cl/vsi_cl/ >> ~/.bashrc",
       "echo source /home/centos/aws-fpga/hdk_setup.sh >> ~/.bashrc",
-      "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl"
+      "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl",
+
+      "sudo rm /root/.ssh/authorized_keys /var/NX/nx/.ssh/restore.id_dsa.pub /var/NX/nx/.ssh/restore.id_rsa.pub /var/NX/nx/.ssh/default.id_dsa.pub /var/NX/nx/.ssh/default.id_rsa.pub /home/centos/.ssh/authorized_keys"
     ]
   }]
 }
