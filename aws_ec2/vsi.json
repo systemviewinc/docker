@@ -4,7 +4,6 @@
     "aws_access_key": "",
     "aws_secret_key": "",
     "svi_s3": "https://s3.amazonaws.com/systemview",
-    "nx_img": "nomachine_5.2.21_1_x86_64.rpm",
 	"vivado_name": "Xilinx_Vivado_SDK_",
     "vivado_version": "2017.1",
     "vivado_version_min": "_0415_1",
@@ -71,14 +70,25 @@
       "echo source scl_source enable devtoolset-6 >> ~/.bashrc",
 
       "echo \"===>installing utils and display tools <===\"",
-      "sudo yum install -y fish git wget python-pip python-wheel bzip2",
+      "sudo yum install -y fish git wget python-pip python-wheel bzip2 tigervnc-server",
       "sudo yum groupinstall -y \"x window system\"",
       "sudo yum groupinstall -y xfce",
 
-      "mkdir -p ~/.config/xfce4/terminal && echo [Configuration] >> ~/.config/xfce4/terminal/terminalrc && echo \"FontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
+      "echo \"===>setting up vnc server<===\"",
+      "sudo cp /lib/systemd/system/vncserver@.service /etc/systemd/system/vncserver@:1.service",
+      "sudo sed -i -e 's/vncserver %i/vncserver %i -geometry 2560x1440 -localhost/g' /etc/systemd/system/vncserver@:1.service",
+      "sudo sed -i -e 's/<USER>/centos/g' /etc/systemd/system/vncserver@:1.service",
 
-      "wget -q {{user `svi_s3`}}/files/thirdparty/{{user `nx_img`}} && sudo rpm -i ~/{{user `nx_img`}} && rm ~/{{user `nx_img`}}",
-      "mkdir -p ~/.nx/config && cd ~/.nx/config && ln -s ../../.ssh/authorized_keys authorized.crt && cd ~/",
+      "echo \"===>setting vnc password to systemview<===\"",
+      "printf \"systemview\nsystemview\n\n\" | vncpasswd",
+      "printf \"#!/bin/bash\nxrdb $HOME/.Xresources\nstartxfce4 &\" > ~/.vnc/xstartup && chmod 775 ~/.vnc/xstartup",
+
+      "echo \"===>enabling vnc service<===\"",
+      "sudo systemctl enable vncserver@:1.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl restart vncserver@:1.service",
+
+      "mkdir -p ~/.config/xfce4/terminal && printf \"[Configuration]\nFontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
 
       "sudo pip install --upgrade awscli",
 
@@ -103,7 +113,7 @@
       "echo source /home/centos/aws-fpga/hdk_setup.sh >> ~/.bashrc",
       "mkdir -p ~/.Xilinx/Vivado && cd ~/.Xilinx/Vivado && ln -s Vivado_init.tcl init.tcl",
 
-      "sudo rm /root/.ssh/authorized_keys /var/NX/nx/.ssh/restore.id_dsa.pub /var/NX/nx/.ssh/restore.id_rsa.pub /var/NX/nx/.ssh/default.id_dsa.pub /var/NX/nx/.ssh/default.id_rsa.pub /home/centos/.ssh/authorized_keys"
+      "sudo rm -f /root/.ssh/authorized_keys /home/centos/.ssh/authorized_keys"
     ]
   }]
 }
