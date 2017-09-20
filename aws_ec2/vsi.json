@@ -83,7 +83,7 @@
       "cd /etc/systemd/system && sudo wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/novnc.service && sudo systemctl enable novnc.service && sudo systemctl start novnc.service",
 
       "echo \"===>setting vnc password to systemview<===\"",
-      "cd ~/.vnc && wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/xstartup && chmod 755 xstartup",
+      "mkdir -p ~/.vnc && cd ~/.vnc && wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/xstartup && chmod 755 xstartup",
       "printf \"systemview\nsystemview\n\n\" | vncpasswd",
 
       "echo \"===>enabling vnc service<===\"",
@@ -91,7 +91,7 @@
       "sudo systemctl daemon-reload",
       "sudo systemctl restart vncserver@:1.service",
 
-      "mkdir -p ~/.config/xfce4/terminal && printf \"[Configuration]\nFontName=DejaVu Sans Mono 10\" >> ~/.config/xfce4/terminal/terminalrc",
+      "mkdir -p ~/.config/xfce4/terminal &&  && cd ~/.config/xfce4/terminal && wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/terminalrc && chmod 755 terminalrc",
 
       "sudo pip install --upgrade awscli",
 
