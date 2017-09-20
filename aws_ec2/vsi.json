@@ -70,21 +70,24 @@
       "echo source scl_source enable devtoolset-6 >> ~/.bashrc",
 
       "echo \"===>installing utils and display tools <===\"",
-      "sudo yum install -y fish git wget python-pip python-wheel bzip2 tigervnc-server",
+      "sudo yum install -y fish git wget python-pip python-wheel bzip2 tigervnc-server novnc tmux",
       "sudo yum groupinstall -y \"x window system\"",
       "sudo yum groupinstall -y xfce",
 
       "echo \"===>setting up vnc server<===\"",
       "sudo cp /lib/systemd/system/vncserver@.service /etc/systemd/system/vncserver@:1.service",
-      "sudo sed -i -e 's/vncserver %i/vncserver %i -geometry 2560x1440 -localhost/g' /etc/systemd/system/vncserver@:1.service",
+      "sudo sed -i -e 's/vncserver %i/vncserver %i -geometry 2560x1440 -localhost -depth 24/g' /etc/systemd/system/vncserver@:1.service",
       "sudo sed -i -e 's/<USER>/centos/g' /etc/systemd/system/vncserver@:1.service",
 
+      "echo \"===>setting up novnc service<===\"",
+      "cd /etc/systemd/system && sudo wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/novnc.service && sudo systemctl enable novnc.service && sudo systemctl start novnc.service",
+
       "echo \"===>setting vnc password to systemview<===\"",
+      "cd ~/.vnc && wget -q https://raw.githubusercontent.com/systemviewinc/docker/master/common/xstartup && chmod 755 xstartup",
       "printf \"systemview\nsystemview\n\n\" | vncpasswd",
-      "printf \"#!/bin/bash\nxrdb $HOME/.Xresources\nstartxfce4 &\" > ~/.vnc/xstartup && chmod 775 ~/.vnc/xstartup",
 
       "echo \"===>enabling vnc service<===\"",
-      "sudo systemctl enable vncserver@:1.service",
+      "sudo systemctl enable vncserver@:1.service && sudo systemctl start vncserver@:1.service",
       "sudo systemctl daemon-reload",
       "sudo systemctl restart vncserver@:1.service",
 

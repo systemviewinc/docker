@@ -1,0 +1,12 @@
+[Unit]
+Description=websocket for Remote desktop service (VNC)
+After=syslog.target network.target
+
+[Service]
+Type=simple
+# Clean any existing files in /tmp/.X11-unix environment
+ExecStart=/bin/sh -c '/usr/bin/python /usr/bin/websockify --web /usr/bin/../share/novnc/ 80 localhost:5901'
+ExecStop=/bin/sh -c "kill $(ps ax | grep '/usr/bin/websockify' | grep -v grep | awk '{print $1}')"
+
+[Install]
+WantedBy=multi-user.target
