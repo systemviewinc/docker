@@ -2,9 +2,10 @@
 
 if `hash vivado 2>/dev/null` && [[ `vivado -version` =~ Vivado\ v([^[:space:]]+) ]]; then
 	VIVADO_VERSION=${BASH_REMATCH[1]}
+else
+	VIVADO_VERSION=2017.1_sdx
 fi
 
-VIVADO_VERSION=2017.1_sdx
 
 if [[ -n $VSI_INSTALL ]]; then
 	VSI_PATH=$VSI_INSTALL
