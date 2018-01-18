@@ -1,0 +1,64 @@
+{
+  "variables": {
+    "domain_name": "corp.systemviewinc.com",
+    "root_dir": "/net/shared/infra/linux_client",
+    "host_name": "cetautomatix"
+  },
+  "builders": [ {
+    "type": "qemu",
+    "iso_url": "/net/shared/thirdparty/ubuntu-16.04.3-server-amd64.iso",
+    "iso_checksum": "f3532991e031cae75bcf5e695afb844dd278fff9",
+    "iso_checksum_type": "sha1",
+    "output_directory": "infrared",
+    "shutdown_command": "sudo shutdown -P now",
+    "disk_size": 5000,
+    "format": "raw",
+    "headless": false,
+    "accelerator": "kvm",
+    "http_directory": "/net/shared/infra/linux_client",
+    "http_port_min": 10082,
+    "http_port_max": 10089,
+    "ssh_host_port_min": 2222,
+    "ssh_host_port_max": 2229,
+    "ssh_username": "nan",
+    "ssh_password": "automagic",
+    "ssh_port": 22,
+    "ssh_wait_timeout": "720s",
+    "vm_name": "{{ user `host_name` }}",
+    "net_device": "virtio-net",
+    "disk_interface": "virtio",
+    "boot_wait": "5s",
+    "boot_command": [
+      "<enter><wait>",
+      "<f6><esc>",
+      "net.ifnames=0 ",
+      "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
+      "<enter>"
+   ]
+  } ],
+  "provisioners": [{
+    "type": "file",
+    "source": "{{user `root_dir`}}/krb5.conf",
+    "destination": "/tmp/"
+  }, {
+    "type": "file",
+    "source": "{{user `root_dir`}}/smb.conf",
+    "destination": "/tmp/"
+  }, {
+    "type": "file",
+    "source": "{{user `root_dir`}}/ntp.conf",
+    "destination": "/tmp/"
+  }, {
+    "type": "file",
+    "source": "{{user `root_dir`}}/realmd.conf",
+    "destination": "/tmp/"
+  }, {
+    "type": "file",
+    "source": "{{user `root_dir`}}/sssd.conf",
+    "destination": "/tmp/"
+  }, {
+    "type": "shell",
+    "script": "/net/shared/infra/linux_client/init.sh",
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }} {{ user `host_name` }}"
+  }]
+}

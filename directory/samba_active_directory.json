@@ -1,37 +1,72 @@
 {
-  "builders":
-  [
-    {
-      "type": "qemu",
-      "iso_url": "/net/shared/thirdparty/ubuntu-16.04.3-server-amd64.iso",
-      "iso_checksum": "f3532991e031cae75bcf5e695afb844dd278fff9",
-      "iso_checksum_type": "sha1",
-      "output_directory": "samba_active_directory",
-      "shutdown_command": "sudo shutdown -P now",
-      "disk_size": 5000,
-      "format": "raw",
-      "headless": false,
-      "accelerator": "kvm",
-      "http_directory": "/net/shared/infra/directory",
-      "http_port_min": 10082,
-      "http_port_max": 10089,
-      "ssh_host_port_min": 2222,
-      "ssh_host_port_max": 2229,
-      "ssh_username": "nan",
-      "ssh_password": "systemview",
-      "ssh_port": 22,
-      "ssh_wait_timeout": "720s",
-      "vm_name": "samba_active_directory",
-      "net_device": "virtio-net",
-      "disk_interface": "virtio",
-      "boot_wait": "5s",
-      "boot_command": [
-        "<enter><wait>",
-        "<f6><esc>",
-        "net.ifnames=0 ",
-        "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
-        "<enter>"
-     ]
-    }
-  ]
+  "variables": {
+    "domain_name": "directory.systemviewinc.com"
+  },
+  "builders": [ {
+    "type": "qemu",
+    "iso_url": "/net/shared/thirdparty/ubuntu-16.04.3-server-amd64.iso",
+    "iso_checksum": "f3532991e031cae75bcf5e695afb844dd278fff9",
+    "iso_checksum_type": "sha1",
+    "output_directory": "infra1",
+    "shutdown_command": "sudo shutdown -P now",
+    "disk_size": 5000,
+    "format": "raw",
+    "headless": false,
+    "accelerator": "kvm",
+    "http_directory": "/net/shared/infra/directory",
+    "http_port_min": 10082,
+    "http_port_max": 10089,
+    "ssh_host_port_min": 2222,
+    "ssh_host_port_max": 2229,
+    "ssh_username": "nan",
+    "ssh_password": "systemview",
+    "ssh_port": 22,
+    "ssh_wait_timeout": "720s",
+    "vm_name": "{{ user `host_name` }}",
+    "net_device": "virtio-net",
+    "disk_interface": "virtio",
+    "boot_wait": "5s",
+    "boot_command": [
+      "<enter><wait>",
+      "<f6><esc>",
+      "net.ifnames=0 ",
+      "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ",
+      "<enter>"
+   ]
+  } ],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "figlet -w 100 -f small -c SVI Directory Server {{ user `host_name` }} > /tmp/motd",
+      "echo \"SystemView Infrastructure Docs:  https://systemviewinc.com/infra\" >> /tmp/motd",
+      "sudo mv /tmp/motd /etc/motd"
+    ]
+  }, {
+    "type": "shell",
+    "inline": [
+      " echo \"127.0.0.1       localhost localhost.localdomain\" >> /tmp/hosts",
+      "echo \"{{ user `ip_address` }}     {{ user `host_name` }}.{{ user `domain_name` }} {{ user `host_name` }}\" >> /tmp/hosts",
+      "sudo mv /tmp/hosts /etc/hosts",
+
+      "echo {{ user `host_name` }} >> /tmp/hostname",
+      "sudo mv /tmp/hostname /etc/hostname",
+      "sudo reboot"
+    ],
+    "expect_disconnect": true
+  }, {
+    "type": "shell",
+    "script": "/net/shared/infra/directory/init.sh",
+    "environment_vars": [
+      "DOMAIN={{ user `domain_name` }}",
+      "DOMAINPASS={{ user `domain_pass` }}",
+      "JOINSITE={{ user `join_site` }}",
+      "DNSFORWARDER={{ user `dns_forwarder` }}",
+      "JOIN={{ user `join` }}",
+      "INSECURELDAP={{ user `insecure_ldap` }}",
+      "NOCOMPLEXITY={{ user `no_complexity` }}",
+      "MULTISITE={{ user `multisite` }}"
+    ],
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo {{ .Path }}",
+    "pause_before": "15s"
+  }]
 }
