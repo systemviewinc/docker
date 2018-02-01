@@ -1,0 +1,5 @@
+Host *
+  GSSAPIAuthentication yes
+
+Host *.corp.systemviewinc.com
+  GSSAPIDelegateCredentials yes
